@@ -1,7 +1,6 @@
 FROM php:7.1-apache
 
-ARG PUBLIC=public_html
-ENV WEBROOT /var/www$PUBLIC
+ENV WEBROOT /var/www/public_html
 ENV PHP_INI /usr/local/etc/php/conf.d/custom.ini
 
 # Enable mod_rewrite in Apache config
