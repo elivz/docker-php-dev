@@ -1,6 +1,6 @@
 FROM php:7.1-apache
 
-ARG PUBLIC=public_html
+ENV PUBLIC=public_html
 ENV WEBROOT /var/www$PUBLIC
 ENV PHP_INI /usr/local/etc/php/conf.d/custom.ini
 
