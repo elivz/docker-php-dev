@@ -20,10 +20,10 @@ RUN apt-get update && apt-get install -y \
         ssmtp \
         libmagickwand-dev \
         --no-install-recommends && rm -r /var/lib/apt/lists/* \
-    && pecl install imagick xdebug \
+    && pecl install imagick redis xdebug \
     && docker-php-ext-configure gd --with-freetype-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr \
     && docker-php-ext-install gd mbstring mysqli pdo pdo_mysql opcache iconv mcrypt calendar \
-    && docker-php-ext-enable imagick xdebug
+    && docker-php-ext-enable imagick redis xdebug
 
 # PHP configurationf
 RUN touch $PHP_INI \
