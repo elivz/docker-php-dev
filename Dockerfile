@@ -39,6 +39,11 @@ RUN touch $PHP_INI \
     && echo "upload_max_filesize = 128M" >> $PHP_INI \
     && echo "post_max_size = 128M" >> $PHP_INI
 
+# Install WP-CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+    && chmod +x wp-cli.phar \
+    && mv wp-cli.phar /usr/local/bin/wp
+
 # Set webroot directory for Apache virtual host
 RUN sed -ri -e \
         's!/var/www/html!${WEBROOT}!g' \
@@ -50,5 +55,11 @@ RUN sed -ri -e \
 # Route mail through MailCatcher
 RUN echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
-# Set webroot
+RUN groupadd --gid 3434 www-user \
+    && useradd --uid 3434 --gid www-user --shell /bin/bash --create-home www-user \
+    && echo 'www-user ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-www-user \
+    && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep
+
+USER www-user
+
 WORKDIR $WEBROOT
