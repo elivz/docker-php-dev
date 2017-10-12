@@ -57,4 +57,4 @@ RUN echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp
 
 USER www-data
 
-WORKDIR $WEBROOT
+WORKDIR /var/www
