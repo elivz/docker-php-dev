@@ -1,5 +1,7 @@
 FROM php:7.1-apache
 
+MAINTAINER Eli Van Zoeren
+
 ENV WEBROOT /var/www/public_html
 ENV PHP_INI /usr/local/etc/php/conf.d/custom.ini
 
