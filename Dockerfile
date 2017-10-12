@@ -55,6 +55,4 @@ RUN sed -ri -e \
 # Route mail through MailCatcher
 RUN echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
-USER www-data
-
 WORKDIR /var/www
