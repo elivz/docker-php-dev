@@ -55,11 +55,6 @@ RUN sed -ri -e \
 # Route mail through MailCatcher
 RUN echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
-RUN groupadd --gid 3434 www-user \
-    && useradd --uid 3434 --gid www-user --shell /bin/bash --create-home www-user \
-    && echo 'www-user ALL=NOPASSWD: ALL' >> /etc/sudoers.d/50-www-user \
-    && echo 'Defaults    env_keep += "DEBIAN_FRONTEND"' >> /etc/sudoers.d/env_keep
-
-USER www-user
+USER www-data
 
 WORKDIR $WEBROOT
