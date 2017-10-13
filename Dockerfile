@@ -9,24 +9,17 @@ ENV PHP_INI /usr/local/etc/php/conf.d/custom.ini
 RUN a2enmod rewrite
 
 # Install PHP extensions
-RUN apt-get update && apt-get install -y \
-        libfreetype6-dev \
-        libpng-dev \
-        libtiff-dev \
-        libgif-dev \
-        libpng12-dev \
-        libjpeg-dev \
-        webp \
-        libmcrypt-dev \
-        ssmtp \
-        libmagickwand-dev \
-        --no-install-recommends && rm -r /var/lib/apt/lists/* \
+RUN apt-get update && apt-get install -yqq --no-install-recommends \
+        libfreetype6-dev libpng-dev libtiff-dev libgif-dev libpng12-dev libjpeg-dev webp \
+        libmcrypt-dev ssmtp libmagickwand-dev \
+    && apt-get -y autoremove && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && pecl install imagick redis xdebug \
     && docker-php-ext-configure gd --with-freetype-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr \
     && docker-php-ext-install gd mbstring mysqli pdo pdo_mysql opcache iconv mcrypt calendar \
     && docker-php-ext-enable imagick redis xdebug
 
-# PHP configurationf
+# PHP configuration
 RUN touch $PHP_INI \
     && echo "xdebug.remote_enable = 1" >> $PHP_INI \
     && echo "xdebug.max_nesting_level = 1000" >> $PHP_INI \
@@ -38,6 +31,9 @@ RUN touch $PHP_INI \
     && echo "sendmail_path = '/usr/sbin/ssmtp -t'" >> $PHP_INI \
     && echo "upload_max_filesize = 128M" >> $PHP_INI \
     && echo "post_max_size = 128M" >> $PHP_INI
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
 # Install WP-CLI
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
