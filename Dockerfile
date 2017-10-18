@@ -2,8 +2,8 @@ FROM php:7.1-apache
 
 MAINTAINER Eli Van Zoeren
 
-ENV WEBROOT /var/www/public_html
-ENV PHP_INI /usr/local/etc/php/conf.d/custom.ini
+ENV PUBLIC_FOLDER="/public_html" \
+    PHP_INI="/usr/local/etc/php/conf.d/custom.ini"
 
 # Enable mod_rewrite in Apache config
 RUN a2enmod rewrite
@@ -42,10 +42,10 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 
 # Set webroot directory for Apache virtual host
 RUN sed -ri -e \
-        's!/var/www/html!${WEBROOT}!g' \
+        's!/var/www/html!/var/www${PUBLIC_FOLDER}!g' \
         /etc/apache2/sites-available/*.conf
 RUN sed -ri -e \
-        's!/var/www/html!${WEBROOT}!g' \
+        's!/var/www/html!/var/www${PUBLIC_FOLDER}!g' \
         /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 # Route mail through MailCatcher
