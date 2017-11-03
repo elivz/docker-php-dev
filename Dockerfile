@@ -12,6 +12,7 @@ RUN a2enmod rewrite
 RUN apt-get update && apt-get install -yqq --no-install-recommends \
         libfreetype6-dev libpng-dev libtiff-dev libgif-dev libpng12-dev libjpeg-dev webp \
         libmcrypt-dev ssmtp libmagickwand-dev \
+        rsync git sudo openssh-client ca-certificates tar gzip unzip zip \
     && apt-get -y autoremove && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && pecl install imagick redis xdebug \
@@ -30,25 +31,29 @@ RUN touch $PHP_INI \
     && echo "opcache.fast_shutdown = 1" >> $PHP_INI \
     && echo "sendmail_path = '/usr/sbin/ssmtp -t'" >> $PHP_INI \
     && echo "upload_max_filesize = 128M" >> $PHP_INI \
-    && echo "post_max_size = 128M" >> $PHP_INI
+    && echo "post_max_size = 128M" >> $PHP_INI \
+    && echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
 # Install WP-CLI
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
-    && chmod +x wp-cli.phar \
-    && mv wp-cli.phar /usr/local/bin/wp
+    && chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
+
+# Install Node, Yarn, & Gulp
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+    && apt-get update && apt-get install -y build-essential nodejs \
+    && curl -o- -L https://yarnpkg.com/install.sh | bash \
+    && ln -s /root/.yarn/bin/yarn /usr/local/bin/yarn \
+    && /usr/bin/npm install -g gulp
 
 # Set webroot directory for Apache virtual host
 RUN sed -ri -e \
         's!/var/www/html!/var/www${PUBLIC_FOLDER}!g' \
-        /etc/apache2/sites-available/*.conf
-RUN sed -ri -e \
+        /etc/apache2/sites-available/*.conf \
+    && sed -ri -e \
         's!/var/www/html!/var/www${PUBLIC_FOLDER}!g' \
         /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
-
-# Route mail through MailCatcher
-RUN echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
 WORKDIR /var/www
