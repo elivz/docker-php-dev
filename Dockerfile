@@ -57,3 +57,5 @@ RUN sed -ri -e \
         /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 WORKDIR /var/www
+
+USER www-data
