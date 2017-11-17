@@ -32,6 +32,7 @@ RUN touch $PHP_INI \
     && echo "sendmail_path = '/usr/sbin/ssmtp -t'" >> $PHP_INI \
     && echo "upload_max_filesize = 128M" >> $PHP_INI \
     && echo "post_max_size = 128M" >> $PHP_INI \
+    && echo "memory_limit = 1024M" >> $PHP_INI \
     && echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
 # Install Composer
