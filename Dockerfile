@@ -35,18 +35,16 @@ RUN touch $PHP_INI \
     && echo "memory_limit = 1024M" >> $PHP_INI \
     && echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
-
-# Install WP-CLI
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+# Install Composer & WP-CLI
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
     && chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
 
 # Install Node, Yarn, & Gulp
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
-    && apt-get update && apt-get install -y build-essential nodejs \
-    && curl -o- -L https://yarnpkg.com/install.sh | bash \
-    && ln -s /root/.yarn/bin/yarn /usr/local/bin/yarn \
+    && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
+    && apt-get update && apt-get install -y build-essential nodejs yarn \
     && /usr/bin/npm install -g gulp
 
 # Set webroot directory for Apache virtual host
