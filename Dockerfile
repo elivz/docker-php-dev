@@ -37,7 +37,6 @@ RUN touch $PHP_INI \
 
 # Install Composer & WP-CLI
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    && mkdir /var/tmp/.composer && chmod 777 /var/tmp/.composer && composer config -g set home /var/tmp/.composer \
     && curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
     && chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
 
@@ -46,7 +45,6 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
     && apt-get update && apt-get install -y build-essential nodejs yarn \
-    && mkdir /var/tmp/yarn && chmod 777 /var/tmp/yarn && yarn config set cache-folder /var/tmp/yarn \
     && /usr/bin/npm install -g gulp
 
 # Set webroot directory for Apache virtual host
