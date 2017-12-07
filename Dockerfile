@@ -3,8 +3,7 @@ FROM php:7.1-apache
 MAINTAINER Eli Van Zoeren
 
 ENV PUBLIC_FOLDER="/public_html" \
-    PHP_INI="/usr/local/etc/php/conf.d/custom.ini" \
-    COMPOSER_HOME="/var/tmp/.composer"
+    PHP_INI="/usr/local/etc/php/conf.d/custom.ini"
 
 # Enable mod_rewrite in Apache config
 RUN a2enmod rewrite
@@ -47,7 +46,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
     && apt-get update && apt-get install -y build-essential nodejs yarn \
-    && yarn config set cache-folder /var/tmp/yarn \
+    && mkdir /var/tmp/yarn && chmod 777 /var/tmp/yarn && yarn config set cache-folder /var/tmp/yarn \
     && /usr/bin/npm install -g gulp
 
 # Set webroot directory for Apache virtual host
