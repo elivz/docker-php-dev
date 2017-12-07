@@ -3,7 +3,8 @@ FROM php:7.1-apache
 MAINTAINER Eli Van Zoeren
 
 ENV PUBLIC_FOLDER="/public_html" \
-    PHP_INI="/usr/local/etc/php/conf.d/custom.ini"
+    PHP_INI="/usr/local/etc/php/conf.d/custom.ini" \
+    COMPOSER_HOME="/var/tmp/.composer"
 
 # Enable mod_rewrite in Apache config
 RUN a2enmod rewrite
