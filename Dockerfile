@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && pecl install imagick redis xdebug \
     && docker-php-ext-configure gd --with-freetype-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr \
-    && docker-php-ext-install gd mbstring mysqli pdo pdo_mysql opcache iconv mcrypt calendar zip \
+    && docker-php-ext-install gd mbstring mysqli pdo pdo_mysql opcache iconv mcrypt calendar zip intl \
     && docker-php-ext-enable imagick redis xdebug
 
 # PHP configuration
