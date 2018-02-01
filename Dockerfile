@@ -11,7 +11,7 @@ RUN a2enmod rewrite
 # Install PHP extensions
 RUN apt-get update && apt-get install -yqq --no-install-recommends \
     libfreetype6-dev libpng-dev libtiff-dev libgif-dev libpng12-dev libjpeg-dev \
-    libmcrypt-dev ssmtp libmagickwand-dev jpegoptim optipng webp \
+    libicu-dev libmcrypt-dev ssmtp libmagickwand-dev jpegoptim optipng webp \
     rsync git sudo openssh-client ca-certificates tar gzip unzip zip \
     && apt-get -y autoremove && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
@@ -46,7 +46,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
     && apt-get update && apt-get install -y build-essential nodejs yarn \
     && /usr/bin/npm install -g gulp svgo \
-    && /user/bin/yarn config set cache-folder /var/tmp/yarn
+    && /usr/bin/yarn config set cache-folder /var/tmp/yarn
 
 # Set webroot directory for Apache virtual host
 RUN sed -ri -e \
