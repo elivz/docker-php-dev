@@ -10,9 +10,9 @@ RUN a2enmod rewrite
 
 # Install PHP extensions
 RUN apt-get update && apt-get install -yqq --no-install-recommends \
-        libfreetype6-dev libpng-dev libtiff-dev libgif-dev libpng12-dev libjpeg-dev webp \
-        libmcrypt-dev ssmtp libmagickwand-dev \
-        rsync git sudo openssh-client ca-certificates tar gzip unzip zip \
+    libfreetype6-dev libpng-dev libtiff-dev libgif-dev libpng12-dev libjpeg-dev \
+    libmcrypt-dev ssmtp libmagickwand-dev jpegoptim optipng webp \
+    rsync git sudo openssh-client ca-certificates tar gzip unzip zip \
     && apt-get -y autoremove && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && pecl install imagick redis xdebug \
@@ -23,6 +23,8 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends \
 # PHP configuration
 RUN touch $PHP_INI \
     && echo "xdebug.remote_enable = 1" >> $PHP_INI \
+    && echo "xdebug.remote_autostart = 1" >> $PHP_INI \
+    && echo "xdebug.remote_connect_backt = 1" >> $PHP_INI \
     && echo "xdebug.max_nesting_level = 1000" >> $PHP_INI \
     && echo "xdebug.profiler_enable_trigger = 1" >> $PHP_INI \
     && echo "xdebug.profiler_output_dir = "/var/log"" >> $PHP_INI \
@@ -35,24 +37,23 @@ RUN touch $PHP_INI \
     && echo "memory_limit = 1024M" >> $PHP_INI \
     && echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
-# Install Composer & WP-CLI
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    && curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
-    && chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
-# Install Node, Yarn, & Gulp
+# Install Node, Yarn, Gulp, & SVGO
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
     && apt-get update && apt-get install -y build-essential nodejs yarn \
-    && /usr/bin/npm install -g gulp
+    && /usr/bin/npm install -g gulp svgo
+    && /user/bin/yarn config set cache-folder /var/tmp/yarn
 
 # Set webroot directory for Apache virtual host
 RUN sed -ri -e \
-        's!/var/www/html!/var/www${PUBLIC_FOLDER}!g' \
-        /etc/apache2/sites-available/*.conf \
+    's!/var/www/html!/var/www${PUBLIC_FOLDER}!g' \
+    /etc/apache2/sites-available/*.conf \
     && sed -ri -e \
-        's!/var/www/html!/var/www${PUBLIC_FOLDER}!g' \
-        /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+    's!/var/www/html!/var/www${PUBLIC_FOLDER}!g' \
+    /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 WORKDIR /var/www
