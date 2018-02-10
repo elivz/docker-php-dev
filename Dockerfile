@@ -10,9 +10,10 @@ RUN a2enmod rewrite
 
 # Install PHP extensions
 RUN apt-get update && apt-get install -yqq --no-install-recommends \
-    libfreetype6-dev libpng-dev libtiff-dev libgif-dev libpng12-dev libjpeg-dev \
+    autoconf automake libtool nasm make pkg-config git sudo \
+    libfreetype6-dev libpng12-dev libtiff-dev libgif-dev libjpeg-dev \
     libicu-dev libmcrypt-dev ssmtp libmagickwand-dev jpegoptim optipng webp \
-    rsync git sudo openssh-client ca-certificates tar gzip unzip zip \
+    rsync openssh-client ca-certificates tar gzip unzip zip \
     && apt-get -y autoremove && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && pecl install imagick redis xdebug \
