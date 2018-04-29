@@ -2,18 +2,19 @@ FROM php:7.1-apache
 
 MAINTAINER Eli Van Zoeren
 
-ENV PUBLIC_FOLDER="/public_html" \
-    PHP_INI="/usr/local/etc/php/conf.d/custom.ini"
+ENV PUBLIC_FOLDER="/public_html"
 
 # Enable mod_rewrite in Apache config
 RUN a2enmod rewrite
 
+# PHP configuration
+COPY custom.ini /usr/local/etc/php/
+
 # Install PHP extensions
 RUN apt-get update && apt-get install -yqq --no-install-recommends \
-    autoconf automake libtool nasm make pkg-config git sudo \
-    libfreetype6-dev libpng12-dev libtiff-dev libgif-dev libjpeg-dev \
-    libicu-dev libmcrypt-dev ssmtp libmagickwand-dev jpegoptim optipng webp \
-    rsync openssh-client ca-certificates tar gzip unzip zip \
+    autoconf automake libtool nasm make pkg-config git sudo libicu-dev libmcrypt-dev ssmtp \
+    libfreetype6-dev libpng12-dev libtiff-dev libgif-dev libjpeg-dev libmagickwand-dev \
+    jpegoptim optipng webp rsync openssh-client ca-certificates tar gzip unzip zip \
     && apt-get -y autoremove && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && pecl install imagick redis xdebug \
@@ -21,22 +22,8 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends \
     && docker-php-ext-install gd mbstring mysqli pdo pdo_mysql opcache iconv mcrypt calendar zip intl \
     && docker-php-ext-enable imagick redis xdebug
 
-# PHP configuration
-RUN touch $PHP_INI \
-    && echo "xdebug.remote_enable = 1" >> $PHP_INI \
-    && echo "xdebug.remote_autostart = 1" >> $PHP_INI \
-    && echo "xdebug.remote_connect_backt = 1" >> $PHP_INI \
-    && echo "xdebug.max_nesting_level = 1000" >> $PHP_INI \
-    && echo "xdebug.profiler_enable_trigger = 1" >> $PHP_INI \
-    && echo "xdebug.profiler_output_dir = "/var/log"" >> $PHP_INI \
-    && echo "opcache.memory_consumption = 128" >> $PHP_INI \
-    && echo "opcache.revalidate_freq = 0" >> $PHP_INI \
-    && echo "opcache.fast_shutdown = 1" >> $PHP_INI \
-    && echo "sendmail_path = '/usr/sbin/ssmtp -t'" >> $PHP_INI \
-    && echo "upload_max_filesize = 128M" >> $PHP_INI \
-    && echo "post_max_size = 128M" >> $PHP_INI \
-    && echo "memory_limit = 1024M" >> $PHP_INI \
-    && echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
+# Route PHP mail() to ssmtp
+RUN echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
@@ -52,9 +39,6 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
 # Set webroot directory for Apache virtual host
 RUN sed -ri -e \
     's!/var/www/html!/var/www${PUBLIC_FOLDER}!g' \
-    /etc/apache2/sites-available/*.conf \
-    && sed -ri -e \
-    's!/var/www/html!/var/www${PUBLIC_FOLDER}!g' \
-    /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+    /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf /etc/apache2/sites-available/*.conf
 
 WORKDIR /var/www
