@@ -7,9 +7,6 @@ ENV PUBLIC_FOLDER="/public_html"
 # Enable mod_rewrite in Apache config
 RUN a2enmod rewrite
 
-# PHP configuration
-COPY custom.ini /usr/local/etc/php/
-
 # Install PHP extensions
 RUN apt-get update && apt-get install -yqq --no-install-recommends \
     autoconf automake libtool nasm make pkg-config git sudo libicu-dev libmcrypt-dev ssmtp \
@@ -22,7 +19,8 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends \
     && docker-php-ext-install gd mbstring mysqli pdo pdo_mysql opcache iconv mcrypt calendar zip intl \
     && docker-php-ext-enable imagick redis xdebug
 
-# Route PHP mail() to ssmtp
+# PHP configuration
+COPY custom.ini /usr/local/etc/php/conf.d/
 RUN echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
 # Install Composer
