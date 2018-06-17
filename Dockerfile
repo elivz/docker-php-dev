@@ -10,7 +10,7 @@ RUN a2enmod rewrite
 # Install PHP extensions
 RUN apt-get update && apt-get install -yqq --no-install-recommends \
     autoconf automake libtool nasm make pkg-config git sudo libicu-dev libmcrypt-dev ssmtp \
-    libfreetype6-dev libpng12-dev libtiff-dev libgif-dev libjpeg-dev libmagickwand-dev \
+    libfreetype6-dev libpng-dev libtiff-dev libgif-dev libjpeg-dev libmagickwand-dev \
     jpegoptim optipng webp rsync openssh-client ca-certificates tar gzip unzip zip \
     && apt-get -y autoremove && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
