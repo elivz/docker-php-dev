@@ -25,6 +25,7 @@ RUN echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
+RUN composer global require hirak/prestissimo
 
 # Install Node, Yarn, Gulp, & SVGO
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
