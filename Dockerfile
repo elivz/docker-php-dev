@@ -1,4 +1,4 @@
-FROM php:7.1-apache
+FROM php:7.2-apache
 
 MAINTAINER Eli Van Zoeren
 
@@ -9,14 +9,14 @@ RUN a2enmod rewrite
 
 # Install PHP extensions
 RUN apt-get update && apt-get install -yqq --no-install-recommends \
-    autoconf automake libtool nasm make pkg-config git sudo libicu-dev libmcrypt-dev ssmtp \
+    autoconf automake libtool nasm make pkg-config git sudo libicu-dev ssmtp \
     libfreetype6-dev libpng-dev libtiff-dev libgif-dev libjpeg-dev libmagickwand-dev \
     jpegoptim optipng webp rsync openssh-client ca-certificates tar gzip unzip zip gnupg \
     && apt-get -y autoremove && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && pecl install imagick redis xdebug \
     && docker-php-ext-configure gd --with-freetype-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr \
-    && docker-php-ext-install gd mbstring mysqli pdo pdo_mysql opcache iconv mcrypt calendar zip intl \
+    && docker-php-ext-install gd mbstring mysqli pdo pdo_mysql opcache iconv calendar zip intl \
     && docker-php-ext-enable imagick redis xdebug
 
 # PHP configuration
@@ -24,8 +24,8 @@ COPY custom.ini /usr/local/etc/php/conf.d/
 RUN echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
 # Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
-RUN composer global require hirak/prestissimo
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && /usr/local/bin/composer global require hirak/prestissimo
 
 # Install Node, Yarn, Gulp, & SVGO
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
