@@ -1,9 +1,8 @@
 FROM php:7.2-apache
 
-MAINTAINER Eli Van Zoeren
+MAINTAINER Eli Van Zoeren <eli@elivz.com>
 
-ENV PUBLIC_FOLDER="/public_html"
-ENV COMPOSER_HOME="/usr/local/composer"
+ENV PUBLIC_FOLDER /public_html
 
 # Enable mod_rewrite in Apache config
 RUN a2enmod rewrite
@@ -25,16 +24,18 @@ COPY custom.ini /usr/local/etc/php/conf.d/
 RUN echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
 # Install Composer
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_HOME /tmp
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
     && /usr/local/bin/composer global require hirak/prestissimo
 
 # Install Node, Yarn, Gulp, & SVGO
+ENV YARN_CACHE_FOLDER=/tmp/yarn
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
     && apt-get update && apt-get install -y build-essential nodejs yarn \
-    && /usr/bin/npm install -g gulp svgo \
-    && /usr/bin/yarn config set cache-folder /var/tmp/yarn
+    && /usr/bin/npm install -g gulp svgo
 
 # Set webroot directory for Apache virtual host
 RUN sed -ri -e \
