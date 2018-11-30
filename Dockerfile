@@ -40,7 +40,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /tmp/composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    && chown www-data /tmp/composer \
-    && /usr/local/bin/composer global require hirak/prestissimo
+    && /usr/local/bin/composer global require hirak/prestissimo \
+    && chown -R www-data:www-data /tmp/composer*
 
 WORKDIR /var/www
