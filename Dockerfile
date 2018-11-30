@@ -23,11 +23,10 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends \
 COPY custom.ini /usr/local/etc/php/conf.d/
 RUN echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
-# Install Composer
-ENV COMPOSER_ALLOW_SUPERUSER 1
-ENV COMPOSER_HOME /tmp
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    && /usr/local/bin/composer global require hirak/prestissimo
+# Set webroot directory for Apache virtual host
+RUN sed -ri -e \
+    's!/var/www/html!/var/www${PUBLIC_FOLDER}!g' \
+    /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf /etc/apache2/sites-available/*.conf
 
 # Install Node, Yarn, Gulp, & SVGO
 ENV YARN_CACHE_FOLDER=/tmp/yarn
@@ -37,9 +36,11 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
     && apt-get update && apt-get install -y build-essential nodejs yarn \
     && /usr/bin/npm install -g gulp svgo
 
-# Set webroot directory for Apache virtual host
-RUN sed -ri -e \
-    's!/var/www/html!/var/www${PUBLIC_FOLDER}!g' \
-    /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf /etc/apache2/sites-available/*.conf
+# Install Composer
+ENV COMPOSER_ALLOW_SUPERUSER 1
+ENV COMPOSER_HOME /tmp/composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
+    && chown www-data /tmp/composer \
+    && /usr/local/bin/composer global require hirak/prestissimo
 
 WORKDIR /var/www
