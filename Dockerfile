@@ -3,6 +3,7 @@ FROM php:7.2-apache
 MAINTAINER Eli Van Zoeren
 
 ENV PUBLIC_FOLDER="/public_html"
+ENV COMPOSER_HOME="/usr/local/composer"
 
 # Enable mod_rewrite in Apache config
 RUN a2enmod rewrite
