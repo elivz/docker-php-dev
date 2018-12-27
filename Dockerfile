@@ -31,7 +31,7 @@ RUN sed -ri -e \
 # Install Node, Yarn, Gulp, & SVGO
 ENV YARN_CACHE_FOLDER=/tmp/yarn
 ENV npm_config_cache=/tmp/npm
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
     && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
     && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
     && apt-get update && apt-get install -y build-essential nodejs yarn \
@@ -41,7 +41,10 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
 ENV COMPOSER_ALLOW_SUPERUSER 1
 ENV COMPOSER_HOME /tmp/composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer \
-    && /usr/local/bin/composer global require hirak/prestissimo \
+    && /usr/local/bin/composer global require hirak/prestissimo
+
+RUN mkdir /tmp/yarn && chown -R www-data:www-data /tmp/yarn \
+    && chown -R www-data:www-data /tmp/npm \
     && chown -R www-data:www-data /tmp/composer*
 
 WORKDIR /var/www
