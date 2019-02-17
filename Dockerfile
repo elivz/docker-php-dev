@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends \
   && docker-php-ext-enable imagick redis xdebug
 
 # PHP configuration
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 COPY custom.ini /usr/local/etc/php/conf.d/
 RUN echo "mailhub=mail:1025\nUseTLS=NO\nFromLineOverride=YES" > /etc/ssmtp/ssmtp.conf
 
