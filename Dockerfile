@@ -7,14 +7,16 @@ ENV PUBLIC_FOLDER /public_html
 # Enable mod_rewrite in Apache config
 RUN a2enmod rewrite
 
-# Install PHP extensions
+# Install PHP extension dependencies
 RUN apt-get update && apt-get install -yqq --no-install-recommends \
-  autoconf automake libtool nasm make pkg-config git sudo libicu-dev ssmtp \
+  autoconf automake libtool libpq-dev nasm make pkg-config git sudo libicu-dev ssmtp \
   libfreetype6-dev libpng-dev libtiff-dev libgif-dev libjpeg-dev libmagickwand-dev ghostscript \
   jpegoptim optipng webp rsync openssh-client ca-certificates tar gzip unzip zip gnupg \
   && apt-get -y autoremove && apt-get clean \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-  && pecl install imagick redis xdebug \
+  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Install PHP extensions
+RUN pecl install imagick redis xdebug \
   && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
   && docker-php-ext-configure gd --with-freetype-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr \
   && docker-php-ext-install gd mbstring mysqli pgsql pdo pdo_mysql pdo_pgsql opcache iconv calendar zip intl \
