@@ -51,6 +51,7 @@ RUN mkdir /tmp/yarn && chown -R www-data:www-data /tmp/yarn \
   && mkdir /var/www/node_modules && chown -R www-data:www-data /var/www/node_modules \
   && mkdir /var/www/dist && chown -R www-data:www-data /var/www/dist \
   && mkdir /var/www/dist/vendor && chown -R www-data:www-data /var/www/dist/vendor \
+  && mkdir /var/www/dist/storage/runtime && chown -R www-data:www-data /var/www/dist/storage/runtime \
   && chown -R www-data:www-data /tmp/npm \
   && chown -R www-data:www-data /tmp/composer*
 
