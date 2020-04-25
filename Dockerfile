@@ -14,7 +14,7 @@ RUN sed -ri -e \
 
 # Install PHP extension dependencies
 RUN apt-get update && apt-get install -yqq --no-install-recommends \
-  autoconf automake libtool libpq-dev nasm make pkg-config git sudo libicu-dev ssmtp \
+  autoconf automake libtool libpq-dev nasm make pkg-config git sudo libicu-dev \
   libfreetype6-dev libpng-dev libtiff-dev libgif-dev libjpeg-dev libmagickwand-dev ghostscript \
   jpegoptim optipng webp rsync openssh-client ca-certificates tar gzip unzip zip libzip-dev gnupg \
   && apt-get -y autoremove && apt-get clean \
