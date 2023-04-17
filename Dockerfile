@@ -1,4 +1,4 @@
-FROM php:7.3-apache
+FROM php:7.4-apache
 
 MAINTAINER Eli Van Zoeren <eli@elivz.com>
 
@@ -23,7 +23,6 @@ RUN apt-get update && apt-get install -yqq --no-install-recommends \
 # Install PHP extensions
 RUN pecl install imagick redis xdebug \
   && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
-  && docker-php-ext-configure gd --with-freetype-dir=/usr --with-jpeg-dir=/usr --with-png-dir=/usr \
   && docker-php-ext-install gd bcmath mbstring mysqli pgsql pdo pdo_mysql pdo_pgsql opcache iconv calendar zip intl \
   && docker-php-ext-enable imagick redis xdebug
 
@@ -40,7 +39,7 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install Node, Yarn, Gulp, & SVGO
 ENV YARN_CACHE_FOLDER=/tmp/yarn
 ENV npm_config_cache=/tmp/npm
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - \
   && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
   && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
   && apt-get update && apt-get install -y build-essential nodejs yarn \
